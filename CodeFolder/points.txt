@@ -1,0 +1,3 @@
+12/30/2017
+
+The function that modifies the main stuff you see on the 1st of the month correctly creates a csv file
