@@ -36,6 +36,11 @@ import xlsxwriter
 #    But whether or not we use the destinationPath stuff will depend on testMode
 #    After I finally get this to run I want to see if I can organize this much better
 
+#Progress 01/13/2018:
+# I think it does its job
+#all that's left is to make sure that it's object oriented or atl east better strucutured
+# also we want this to autofit the columns
+
 #End goal:
 # This needs to be able to run off of the linux server
 #iT SHOUDL look in a predetermined path determined by a variable
@@ -122,14 +127,22 @@ def writeListToExcel(listToWrite, outputFile):
     book.save(outputFile)
 
 def writeListToXlsx(listToWrite, outputFile):
+    #This function uses the xlsxwriter package
     workbook = xlsxwriter.Workbook(outputFile)
     worksheet = workbook.add_worksheet()
+
+
+    format02 = workbook.add_format()
+    format02.set_num_format('#,##0')
+
+    
     for i in range(0,len(listToWrite)):
         for j in range(0,len(listToWrite[i])):
-
-            if listToWrite[i][j].replace(".","").isnumeric():
-                listToWrite[i][j] = float(listToWrite[i][j])
-                worksheet.write_number(i, j, listToWrite[i][j])
+            tempCell = listToWrite[i][j].replace(".","")
+            tempCell = tempCell.replace(",","")
+            if tempCell.isnumeric():
+                tempCell = float(tempCell)
+                worksheet.write_number(i, j, tempCell, format02)
             else:
                 worksheet.write_string(i, j, listToWrite[i][j])
     workbook.close()
@@ -142,6 +155,7 @@ def extractStorage():
     pass
 
 def manipulateTypicalMonthly():
+        
 #This function assumes that the csv file has a header row
 #It also assumes that all of their input extracts' headers end with the months header columns always ending in DEC
 #FUnction assumes that the month we are processing it for is the month previous to the date on which it is being processed.
@@ -270,6 +284,7 @@ def sendErrorMessage():
 #This function is in charge of managing filesTemplate and dealing with the the input path folder
 #Possible candidate classes to replace this function are for filesTemplateManager and directoryManager
 def iterateThroughFiles():
+
     print("start")
     dayList = []
     del dayList[:]
@@ -280,16 +295,27 @@ def iterateThroughFiles():
 #        if testMode != 0:
 #            filesTemplate[i][destinationDirCol] = outputPath
         
-
-    for fileName in os.listdir(inputPath):
-        for i in range(0,len(filesTemplate)):
+    for i in range(0,len(filesTemplate)):
+        for fileName in os.listdir(inputPath):
             if filesTemplate[i][dateCol] in yList or (filesTemplate[i][dateCol].lower() == "daily") or (filesTemplate[i][dateCol] == ""):
                 if os.path.join(inputPath,fileName) == filesTemplate[i][inputExtractCol]:
 #                    completeName = os.path.join(inputDir, fileName)
                     processAndSaveFile(filesTemplate[i][inputExtractCol], i)
                     break
+
+    print("end iterate")
+    for zz in range(0,len(filesTemplate)):
+        print(filesTemplate[zz][outputNameCol])                
                 
 def processFileName(outputFile):
+
+    print("------------------------------")
+    print("------------------------------")
+    print(outputFile)
+    print("------------------------------")    
+    print("------------------------------")
+    
+        
     monthString = str(monthBeingProcessed)
     if monthBeingProcessed < 10:
         monthString = (str(monthBeingProcessed)).zfill(2)
@@ -298,31 +324,32 @@ def processFileName(outputFile):
     yearString = (str(yearBeingProcessed))
 
     if outputFile.find("YYYY") != -1:
-        print(outputFile)
-        print(yearString)
         outputFile = outputFile.replace("YYYY", yearString,1)
-        print("xx")
-        print(outputFile)
     elif outputFile.find("YY") != -1:
         outputFile = outputFile.replace("YY", yearString[2:4],1)
 
     if outputFile.find("MM") != -1:
         outputFile = outputFile.replace("MM",monthString,1)
+
+
     return outputFile
     
 
 def processAndSaveFile(inputPathAndFile, passedIndex):
+
     functionReturn = 0
     initializeListOfLists(currentCSVList)
     storeCSVAsList(inputPathAndFile, currentCSVList)
+#    print()
+#    print("in processandsave..inputpathandfile: ",inputPathAndFile)
     outputFile = filesTemplate[passedIndex][outputNameCol]
 
-    print("before processfilename: ",outputFile)
     outputFile = processFileName(outputFile)
-    print("after processfilename: ",outputFile)
 
-    for s in range(0,len(filesTemplate)):
-        filesTemplate[s][outputNameCol] = outputFile
+#    for s in range(0,len(filesTemplate)):
+#        filesTemplate[s][outputNameCol] = outputFile
+
+    filesTemplate[passedIndex][outputNameCol] = outputFile
 
     if filesTemplate[passedIndex][actionCol] == "ytd":
         functionReturn = manipulateTypicalMonthly()
@@ -332,7 +359,8 @@ def processAndSaveFile(inputPathAndFile, passedIndex):
         functionReturn = extractStoragePrep(filesTemplate[passedIndex][inputExtractCol],currentCSVList)
     elif filesTemplate[passedIndex][actionCol] == "excelStorage":
         functionReturn = excelStoragePrep(filesTemplate[passedIndex][outputNameCol], currentCSVList)
-        
+
+
 
 #    if functionReturn != -1:
 #        writeListToCSV(currentCSVList, outputFile)
@@ -341,7 +369,6 @@ def processAndSaveFile(inputPathAndFile, passedIndex):
     if functionReturn != -1:
         outputPhase(passedIndex)
         copyToDestinationFolders(passedIndex)
-    
 
 def extractStoragePrep(inputFile, outputList):
     initializeListOfLists(outputList)
@@ -362,10 +389,10 @@ def listToExtract(outputFile, inputList):
     
 
 def outputPhase(passedIndex):
-    currentCSVList
     outputFileAndPath = os.path.join(outputPath,filesTemplate[passedIndex][outputNameCol])
-    print("in outputPhase: ", outputFileAndPath)
-    print(currentCSVList[0])
+    print("index: ",passedIndex)
+    print(filesTemplate[passedIndex][outputNameCol])
+    print(outputFileAndPath)
     if filesTemplate[passedIndex][actionCol] == "ytd":
         writeListToXlsx(currentCSVList, outputFileAndPath)
 #    elif filesTemplate[passedIndex][actionCol] == "easyProcess":
@@ -377,9 +404,6 @@ def outputPhase(passedIndex):
 
 def copyToDestinationFolders(passedIndex):
     outputFileAndPath = os.path.join(outputPath,filesTemplate[passedIndex][outputNameCol])
-    print(outputFileAndPath)
-    print(os.path.join(filesTemplate[passedIndex][destinationDirCol], filesTemplate[passedIndex][outputNameCol]))
-    print("at error: ",filesTemplate[passedIndex][destinationDirCol], " ",filesTemplate[passedIndex][outputNameCol], " ",filesTemplate[passedIndex][inputExtractCol])
     copy2(outputFileAndPath, os.path.join(filesTemplate[passedIndex][destinationDirCol], filesTemplate[passedIndex][outputNameCol]))
    #abc123 
 
@@ -400,12 +424,12 @@ def copyToDestinationFolders(passedIndex):
 #]
 
 filesTemplate = [
-[r"",r"ytd", r"flexsite_uc_stats.txt",  r"FlexSite Unit Code Statistics for YYYY.xls", "C:\\Management Reports\\2017 Management Reports"],
-[r"",r"ytd", r"deptstat.txt", r"Dept UC Statistics Report for YYYY.xls", "C:\\Management Reports\\2017 Management Reports"],
-[r"",r"ytd",r"h_pylori.txt",r"H Pylori Zip Report for YYYY.xls","C:\\Lab\\zFiles from the IT Department\\H pylori zip reports"],
-[r"",r"ytd",r"jak2.txt",r"JAK2 Zip Report for YYYY.xls","C:\\Lab\\zFiles from the IT Department\\JAK2 zip reports"],
-[r"",r"ytd",r"roche_hpv.txt",r"Roche YYYY HPV Statistics by zipcode.xls","C:\\Lab\\zFiles from the IT Department\\HPV by ZipCode Statistics Reports"],
-[r"",r"ytd",r"thyretain.txt",r"YYYY Thyretain Report.xls","C:\\Lab\\zFiles from the IT Department\\Thyretain Zip Reports"],
+["","ytd","flexsite_uc_stats.txt","FlexSite Unit Code Statistics for YYYY.xls", "C:\\Management Reports\\2017 Management Reports"],
+["","ytd","deptstat.txt","Dept UC Statistics Report for YYYY.xls", "C:\\Management Reports\\2017 Management Reports"],
+["","ytd","h_pylori.txt","H Pylori Zip Report for YYYY.xls","C:\\Lab\\zFiles from the IT Department\\H pylori zip reports"],
+["","ytd","jak2.txt","JAK2 Zip Report for YYYY.xls","C:\\Lab\\zFiles from the IT Department\\JAK2 zip reports"],
+["","ytd","roche_hpv.txt","Roche YYYY HPV Statistics by zipcode.xls","C:\\Lab\\zFiles from the IT Department\\HPV by ZipCode Statistics Reports"],
+["","ytd","thyretain.txt","YYYY Thyretain Report.xls","C:\\Lab\\zFiles from the IT Department\\Thyretain Zip Reports"],
 ]
 
 
@@ -438,9 +462,6 @@ destinationDirCol = 4
 #iterateThroughFiles("\dir")
 #-------------------------------------------------------
 #This is the main section at phase3
-for r in range(0,len(filesTemplate)):
-    print(r"check")
-#    print(r"\201")
-    print(filesTemplate[r][destinationDirCol])
+
 iterateThroughFiles()
 #-------------------------------------------------------
