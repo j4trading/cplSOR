@@ -22,6 +22,20 @@ todayDate = datetime.datetime.now()
 todayYear = todayDate.year
 todayMonth = todayDate.month
 
+inputPath = "inputDir"
+outputPath = "outputDir"
+
+if todayMonth == 1:
+    monthBeingProcessed = 12
+else:
+    monthBeingProcessed = todayMonth - 1
+if todayMonth == 1:
+    yearBeingProcessed = todayYear - 1
+else:
+    yearBeingProcessed = todayYear
+
+
+
 currentCSVList = []   #this is a list of lists which holds the values of a csv
 
 def initializeListOfLists(csvList):
@@ -65,16 +79,6 @@ def manipulateTypicalMonthly():
 #    rowLength = 0
     monthTotals = []
     
-    if todayMonth == 1:
-        monthBeingProcessed = 12
-    else:
-        monthBeingProcessed = todayMonth - 1
-
-    if todayMonth == 1:
-        yearBeingProcessed = todayYear - 1
-    else:
-        yearBeingProcessed = todayYear
-
     for i in range(1, monthBeingProcessed +2):    #1 element for each month and also for YTD
         monthTotals.append("")
     
@@ -169,6 +173,8 @@ def manipulateTypicalMonthly():
         tempIndex += 1
 
 
+def easyProcess():
+    pass  #nothing to do
 
 def generalExceptionHandler():
     pass #sendEmailthing
@@ -178,12 +184,79 @@ def sendErrorMessage():
     pass
 
 
-#---------------------------------------------------------------------
-#---------------------------------------------------------------------
-#THSI IS THE MAIN SECTION
-initializeListOfLists(currentCSVList)
-storeCSVAsList('flexsite_uc_stats.csv',currentCSVList)
-manipulateTypicalMonthly()
-writeListToCSV(currentCSVList,'flex_test.xls')
+def iterateThroughFiles():
+    for i in range(0,len(filesTemplate)):
+        filesTemplate[i][1] = os.path.join(inputPath,filesTemplate[i][1])
+        filesTemplate[i][2] = os.path.join(outputPath,filesTemplate[i][2])
+
+    print(inputPath)
+    for fileName in os.listdir(inputPath):
+        for i in range(0,len(filesTemplate)):
+            if os.path.join(inputPath,fileName) == filesTemplate[i][1]:
+#                completeName = os.path.join(inputDir, fileName)
+                processAndSaveFile(filesTemplate[i][1], i)
+                break
+
+def processAndSaveFile(inputPathAndFile, passedIndex):
+    initializeListOfLists(currentCSVList)
+    storeCSVAsList(inputPathAndFile, currentCSVList)
+    outputFile = filesTemplate[passedIndex][2]
+    monthString = str(monthBeingProcessed)
+    if monthBeingProcessed < 10:
+        monthString = (str(monthBeingProcessed)).zfill(2)
+    else:
+        monthString = str(monthBeingProcessed)
+    yearString = (str(yearBeingProcessed))
+
+    if outputFile.find("YYYY") != -1:
+        print(outputFile)
+        print(yearString)
+        outputFile = outputFile.replace("YYYY", yearString,1)
+        print("xx")
+        print(outputFile)
+    elif outputFile.find("YY") != -1:
+        outputFile = outputFile.replace("YY", yearString[2:4],1)
+
+    if outputFile.find("MM") != -1:
+        outputFile = outputFile.replace("MM",monthString,1)
+        
+    if filesTemplate[passedIndex][0] == "ytd":
+        manipulateTypicalMonthly()        
+    elif filesTemplate[passedIndex][0] == "easyProcess":
+        easyProcess()
+
+    writeListToCSV(currentCSVList, outputFile)
+
+    
+
+#These show what type of file it is...inptut file to look for, output file to do, and destination location
+filesTemplate = [
+    #type,  inputfile,  outputFile,  destination
+["ytd", "flexsite_uc_stats.txt",  "FlexSite Unit Code Statistics for YYYY.xls", "S:\Management Reports\2017 Management Reports"],
+["ytd", "deptstat.txt", "Dept UC Statistics Report for YYYY.xls", "S:\Management Reports\2017 Management Reports"]
+]
 
 #---------------------------------------------------------------------
+#---------------------------------------------------------------------
+#THSI IS THE MAIN SECTION before phase 2
+#initializeListOfLists(currentCSVList)
+#storeCSVAsList('flexsite_uc_stats.txt',currentCSVList)
+#manipulateTypicalMonthly()
+#writeListToCSV(currentCSVList,'flex_test.xls')
+
+#---------------------------------------------------------------------
+#This is the current designed workflow of the program:
+#First call iterateThroughFiles
+#That function will iterate and look up the files that are in the directory and look them up in the filesTemplate
+
+#ProcessAndSaveFile then is call within the iterations:
+#It initializes the list that holds the spreadsheet
+#It decides what the outputFile should be named
+#And based on the cell 'type' cell element it decides which data processing function should be called
+# Finally it calls the function that writes from list ot CSV file
+
+#iterateThroughFiles("\dir")
+#-------------------------------------------------------
+#This is the main section at phase3
+iterateThroughFiles()
+#-------------------------------------------------------

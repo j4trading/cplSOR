@@ -1,0 +1,25 @@
+************************************************************&^
+01/03/2018
+ 
+Talk with Scott:
+These are the ways that we can use to get files to open in Excel:
+ 
+One is a script that he has called t2txlr …or something like that…it’s a bash script
+ 
+There are also python libraries that you can use and they are very easy.
+ 
+Finally to solve the problem of having to have formatting…he has a ready made google docs that he copies to.
+After copying the file to goode docs…which is easy to do with the google docs api then e he copies or converts the fiel into a excel document….thus taking the formatting that it acquired in the google docs.
+ 
+These are the libraries that are already installed on the linux machine:
+ 
+Python:
+import xlrd
+ 
+R:
+xlsx
+ 
+ 
+ 
+ 
+************************************************************&^

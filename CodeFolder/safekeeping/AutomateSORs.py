@@ -39,7 +39,7 @@ def storeCSVAsList(fileName,outputList):
 
 def writeListToCSV(listToWrite, outputFile):
     with open(outputFile,"w", newline = '') as csv_file2:
-        writer = csv.writer(csv_file2, delimiter='\t')
+        writer = csv.writer(csv_file2, delimiter=',')
         for line in listToWrite:
             writer.writerow(line)   
 
@@ -184,6 +184,6 @@ def sendErrorMessage():
 initializeListOfLists(currentCSVList)
 storeCSVAsList('flexsite_uc_stats.csv',currentCSVList)
 manipulateTypicalMonthly()
-writeListToCSV(currentCSVList,'flex_test.xls')
+writeListToCSV(currentCSVList,'flex_test.csv')
 
 #---------------------------------------------------------------------

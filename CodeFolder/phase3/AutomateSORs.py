@@ -182,7 +182,7 @@ def sendErrorMessage():
 #---------------------------------------------------------------------
 #THSI IS THE MAIN SECTION
 initializeListOfLists(currentCSVList)
-storeCSVAsList('flexsite_uc_stats.csv',currentCSVList)
+storeCSVAsList('flexsite_uc_stats.txt',currentCSVList)
 manipulateTypicalMonthly()
 writeListToCSV(currentCSVList,'flex_test.xls')
 
