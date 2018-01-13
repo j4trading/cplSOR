@@ -1,0 +1,2 @@
+xlsxwriter stuff works
+Now in phase7 w eneed to maek this object oriented or somethign like that.
