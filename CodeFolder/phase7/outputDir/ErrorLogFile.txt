@@ -1,0 +1,46 @@
+poopFile: filename1could not be processed.
+    In Function:createError.
+    In Class:   ErrorManager.
+Error Details: For loop access of file name in designated folder may have failed
+-------------------------------------------
+
+File: filename1could not be processed.
+    In Function:createError.
+    In Class:   ErrorManager.
+Error Details: For loop access of file name in designated folder may have failed
+-------------------------------------------
+
+-------------------------------------------
+-------------------------------------------
+SOR script error
+-------------------------------------------
+SOR script error
+date:2018-9-16...At 17:32
+-------------------------------------------
+SOR script error
+date:2018/9/16.  At 17:32
+File: filename2could not be processed.
+-------------------------------------------
+SOR script error
+date: 2018/9/16.  At 17:34
+File: filename2 could not be processed.
+    In Function:testFunction.
+Error Details: For loop access of file name in designated folder may have failed
+-------------------------------------------
+
+-------------------------------------------
+SOR script error
+date: 2018/9/16.  At 17:34
+File: filename2 could not be processed.
+    In Function:testFunction.
+Error Details: For loop access of file name in designated folder may have failed
+-------------------------------------------
+
+-------------------------------------------
+SOR script error
+date: 2018/9/16.  At 17:35
+File: filename2 could not be processed.
+    In Function:testFunction.
+Error Details: For loop access of file name in designated folder may have failed
+-------------------------------------------
+

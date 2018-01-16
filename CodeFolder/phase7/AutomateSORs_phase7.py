@@ -6,6 +6,8 @@ import xlwt
 from shutil import copyfile
 from shutil import copy2
 import xlsxwriter
+
+#garden type cycle...thsi is where thre is a growing excitement about a new technology such as blockchain...where there is an overexuberant exciteement about a ne wtech then there is a trough of disillusionment nd then a steady rise of enlightenment.  She thinks ..christina czesschik...thinks we are a bit behidn the trough of disillusionment.
 """
 """
 #This program assumes that the csv file has a header row
@@ -24,8 +26,8 @@ import xlsxwriter
 #   a function to bring other extracts into its directory might need to be added
 # 1/4/16 at phase 4  fIRST I need to get this thing working
 #     After that: I will come back and make this object oriented
-#     The reason for that is that there are too many dependencies among the code.
-#     FOr example process.... function calls manipulate.... function which exits  out of itself if the input extract is not in the expected format.
+#     The reason for that is that there are too many dependencies among the code.  ALso with object orientation each class does only one job and you knwo wher eto look for a function or data/constant
+#     FOr example process.... function calls manipulate.... function which exits  out of itself if the input extract is not in the expected format.  
 #     but the calling function process.... still outputs to excel file regardless.....so I need the inelegant passing of return value to process.... so that it can decide whether or not to create the excel file.
 # The files that you stick into outputDir...after it gets done it needs to be stuck into a Processed directory
 
